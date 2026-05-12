@@ -28,8 +28,20 @@ def create_app(config_class=Config):
     with app.app_context():
         # Make sure uploads dir exists
         os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+        
+        # Import models so SQLAlchemy knows about them before creating tables
+        from app import models
         db.create_all()
         
+        # Seed a default admin user if the database is empty (crucial for Vercel)
+        from app.models import User
+        if not User.query.filter_by(username='admin').first():
+            admin = User(username='admin', email='admin@vetcare.com', role='admin')
+            admin.set_password('admin123')
+            db.session.add(admin)
+            db.session.commit()
+            
+
     from app.routes.auth import auth_bp
     from app.routes.admin import admin_bp
     from app.routes.appointments import appointments_bp
