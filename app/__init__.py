@@ -28,6 +28,7 @@ def create_app(config_class=Config):
     with app.app_context():
         # Make sure uploads dir exists
         os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+        db.create_all()
         
     from app.routes.auth import auth_bp
     from app.routes.admin import admin_bp
