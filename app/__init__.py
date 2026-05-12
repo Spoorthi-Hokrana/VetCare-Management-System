@@ -33,14 +33,12 @@ def create_app(config_class=Config):
         from app import models
         db.create_all()
         
-        # Seed a default admin user if the database is empty (crucial for Vercel)
-        from app.models import User
-        if not User.query.filter_by(username='admin').first():
-            hashed_pw = bcrypt.generate_password_hash('admin123').decode('utf-8')
-            admin = User(username='admin', email='admin@vetcare.com', password=hashed_pw, role='admin')
-            db.session.add(admin)
-            db.session.commit()
-            
+        # Seed all data (including admin) if the database is completely empty
+        try:
+            from seed import run_seed
+            run_seed(db, bcrypt)
+        except Exception as e:
+            print(f"Seeding error: {e}")
 
     from app.routes.auth import auth_bp
     from app.routes.admin import admin_bp
