@@ -84,11 +84,23 @@ A significant portion of development was dedicated to moving away from standard,
 
 ---
 
-### 6. Verification & Quality Assurance
+### 6. Deployment & Cloud Architecture
+The application is architected for cloud deployment, specifically optimized for **Vercel**'s serverless environment.
+
+*   **Serverless Routing:** Utilizes `vercel.json` and an `api/index.py` entry point to route all incoming traffic to the Flask application seamlessly.
+*   **Persistent Logic in Ephemeral Environments:** Since Vercel uses a read-only filesystem, the application dynamically detects the environment and redirects the SQLite database and file uploads to the writable `/tmp` directory.
+*   **Automated Database Initialization:** On first launch in a new environment, the system automatically:
+    1.  Generates the SQLite database schema.
+    2.  Executes a comprehensive **Seeding Script** to populate the app with demo doctors, pets, and clinical records so the system is ready for immediate demonstration.
+
+---
+
+### 7. Verification & Quality Assurance
 The application has passed rigorous automated testing protocols:
 1.  **Syntax Verification:** The Python interpreter (`python -m compileall`) confirmed zero syntax, compilation, or structural errors across all `.py` files.
 2.  **Template Compilation:** Automated HTTP scripts validated all 11 core UI endpoints, confirming that all Jinja2 templates compile perfectly with zero `500 Internal Server Errors`.
 3.  **UI Integrity:** Verified that 100% of placeholder `<button>` and `<a href="#">` elements were successfully replaced with fully functional backend routes.
+4.  **Auto-Seeding Logic:** Verified that the system correctly initializes and populates data in serverless environments without manual intervention.
 
 ---
 
