@@ -36,8 +36,8 @@ def create_app(config_class=Config):
         # Seed a default admin user if the database is empty (crucial for Vercel)
         from app.models import User
         if not User.query.filter_by(username='admin').first():
-            admin = User(username='admin', email='admin@vetcare.com', role='admin')
-            admin.set_password('admin123')
+            hashed_pw = bcrypt.generate_password_hash('admin123').decode('utf-8')
+            admin = User(username='admin', email='admin@vetcare.com', password=hashed_pw, role='admin')
             db.session.add(admin)
             db.session.commit()
             
