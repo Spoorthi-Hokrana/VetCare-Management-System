@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}VetCare Clinic{% endblock %} - VetCare</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Inline SVG Paw Favicon -->
+    <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300b4d8'><path d='M12 2C9.243 2 7 4.243 7 7C7 9.757 9.243 12 12 12C14.757 12 17 9.757 17 7C17 4.243 14.757 2 12 2ZM6.5 13C4.567 13 3 14.567 3 16.5C3 18.433 4.567 20 6.5 20C8.433 20 10 18.433 10 16.5C10 14.567 8.433 13 6.5 13ZM17.5 13C15.567 13 14 14.567 14 16.5C14 18.433 15.567 20 17.5 20C19.433 20 21 18.433 21 16.5C21 14.567 19.433 13 17.5 13ZM12 15C9.79 15 8 16.79 8 19C8 21.21 9.79 23 12 23C14.21 23 16 21.21 16 19C16 16.79 14.21 15 12 15Z'/></svg>">
+    {% block head %}{% endblock %}
+</head>
+<body>
+
+    <div class="d-flex" id="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar">
+            <div class="sidebar-header d-flex align-items-center mb-2">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="var(--color-primary)" xmlns="http://www.w3.org/2000/svg" class="me-2">
+                    <path d="M12 2C9.243 2 7 4.243 7 7C7 9.757 9.243 12 12 12C14.757 12 17 9.757 17 7C17 4.243 14.757 2 12 2ZM6.5 13C4.567 13 3 14.567 3 16.5C3 18.433 4.567 20 6.5 20C8.433 20 10 18.433 10 16.5C10 14.567 8.433 13 6.5 13ZM17.5 13C15.567 13 14 14.567 14 16.5C14 18.433 15.567 20 17.5 20C19.433 20 21 18.433 21 16.5C21 14.567 19.433 13 17.5 13ZM12 15C9.79 15 8 16.79 8 19C8 21.21 9.79 23 12 23C14.21 23 16 21.21 16 19C16 16.79 14.21 15 12 15Z"/>
+                </svg>
+                <h3 class="m-0 text-primary-custom fw-bold">VetCare</h3>
+            </div>
+            
+            <ul class="list-unstyled components">
+                <li class="{% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
+                    <a href="{{ url_for('admin.dashboard') }}"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+                </li>
+                <li class="{% if request.endpoint == 'appointments.index' %}active{% endif %}">
+                    <a href="{{ url_for('appointments.index') }}"><i class="bi bi-calendar2-heart-fill"></i> Appointments</a>
+                </li>
+                <li class="{% if request.endpoint == 'pets.index' %}active{% endif %}">
+                    <a href="{{ url_for('pets.index') }}"><i class="bi bi-emoji-smile-fill"></i> Pets & Owners</a>
+                </li>
+                <li class="{% if request.endpoint == 'billing.index' %}active{% endif %}">
+                    <a href="{{ url_for('billing.index') }}"><i class="bi bi-receipt-cutoff"></i> Billing</a>
+                </li>
+                {% if current_user.role == 'admin' %}
+                <li class="{% if request.endpoint == 'admin.staff' %}active{% endif %}">
+                    <a href="{{ url_for('admin.staff') }}"><i class="bi bi-people-fill"></i> Staff</a>
+                </li>
+                {% endif %}
+            </ul>
+
+            <div class="sidebar-footer mt-auto">
+                <div class="d-flex align-items-center p-2 rounded-4" style="background: var(--color-surface-2);">
+                    <div class="rounded-circle border border-2 border-white bg-white me-2 d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px; font-size: 1.5rem; flex-shrink: 0;">
+                        👩‍⚕️
+                    </div>
+                    <div class="overflow-hidden w-100">
+                        <strong class="d-block text-truncate" style="font-size: 0.9rem;">{{ current_user.username }}</strong>
+                        <span class="badge badge-accent" style="font-size: 0.65rem;">{{ current_user.role | capitalize }}</span>
+                    </div>
+                    <a href="{{ url_for('auth.logout') }}" class="text-danger ms-auto p-2"><i class="bi bi-box-arrow-right fs-5"></i></a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <div id="content">
+            <div class="container-fluid px-0">
+                <!-- Flash Messages -->
+                <div aria-live="polite" aria-atomic="true" class="position-relative">
+                    <div class="toast-container position-fixed bottom-0 end-0 p-4 mb-4">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="toast align-items-center text-bg-{{ category }} border-0 show mb-2" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4000">
+                                        <div class="d-flex">
+                                            <div class="toast-body">
+                                                {% if category == 'success' %}<i class="bi bi-check-circle-fill me-2"></i>
+                                                {% elif category == 'danger' %}<i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                                {% else %}<i class="bi bi-info-circle-fill me-2"></i>{% endif %}
+                                                {{ message }}
+                                            </div>
+                                            <button type="button" class="btn-close btn-close-dark me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Init toasts
+        var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+        var toastList = toastElList.map(function (toastEl) {
+            return new bootstrap.Toast(toastEl)
+        })
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

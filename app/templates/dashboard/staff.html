@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Staff Management 🧑‍⚕️{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1 text-primary-custom">Staff Management 🧑‍⚕️</h2>
+            <p class="text-muted-custom mb-0 fw-semibold">Manage your clinic's doctors, admins, and receptionists.</p>
+        </div>
+        <div>
+            <a href="{{ url_for('admin.add_staff') }}" class="btn btn-primary-custom shadow-sm"><i class="bi bi-person-plus-fill me-2"></i>Add Staff</a>
+        </div>
+    </div>
+
+    <div class="white-card">
+        <h5 class="mb-4 fw-bold text-primary-custom">Clinic Personnel</h5>
+        <div class="table-responsive">
+            <table class="table table-custom">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in staff_members %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary bg-opacity-10 text-primary-custom rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                    <i class="bi bi-person-fill fs-5"></i>
+                                </div>
+                                <strong class="fw-bold">{{ user.username }}</strong>
+                            </div>
+                        </td>
+                        <td class="fw-medium">{{ user.email }}</td>
+                        <td>
+                            <span class="badge 
+                                {% if user.role == 'admin' %}badge-error
+                                {% elif user.role == 'doctor' %}badge-success
+                                {% else %}badge-primary{% endif %} text-uppercase">
+                                {{ user.role }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if current_user.id != user.id %}
+                            <form action="{{ url_for('admin.delete_staff', user_id=user.id) }}" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-light text-danger rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" onclick="return confirm('Delete this staff member?');"><i class="bi bi-trash-fill"></i></button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Billing & Invoices 🧾{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1 text-primary-custom">Billing & Invoices 🧾</h2>
+            <p class="text-muted-custom mb-0 fw-semibold">Track payments and generate receipts.</p>
+        </div>
+    </div>
+
+    <div class="white-card">
+        <h5 class="mb-4 fw-bold text-primary-custom">Recent Invoices</h5>
+        
+        <div class="table-responsive">
+            <table class="table table-custom">
+                <thead>
+                    <tr>
+                        <th>Invoice #</th>
+                        <th>Date</th>
+                        <th>Client / Pet</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for invoice in invoices %}
+                    <tr>
+                        <td><strong class="text-primary-custom">#{{ '%04d' % invoice.id }}</strong></td>
+                        <td class="fw-semibold">{{ invoice.created_at.strftime('%b %d, %Y') }}</td>
+                        <td>
+                            <div class="fw-bold">{{ invoice.appointment.pet.owner.name }}</div>
+                            <small class="text-muted-custom fw-semibold"><i class="bi bi-heart-fill text-accent-custom me-1"></i> {{ invoice.appointment.pet.name }}</small>
+                        </td>
+                        <td><strong class="fs-5">${{ "%.2f"|format(invoice.total_amount) }}</strong></td>
+                        <td>
+                            <span class="badge 
+                                {% if invoice.status == 'Paid' %}badge-success
+                                {% elif invoice.status == 'Partial' %}badge-warning
+                                {% else %}badge-error{% endif %}">
+                                {{ invoice.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('billing.download_pdf', invoice_id=invoice.id) }}" class="btn btn-sm btn-primary-custom rounded-pill px-3 shadow-sm fw-bold">
+                                <i class="bi bi-download me-1"></i> PDF
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5">
+                            <i class="bi bi-receipt d-block text-muted-custom mb-3" style="font-size: 3rem;"></i>
+                            <p class="text-muted-custom fw-bold mb-0">No invoices found.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

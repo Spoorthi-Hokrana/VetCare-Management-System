@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Register Pet 🐾{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1 text-primary-custom">Register New Patient 🐾</h2>
+            <p class="text-muted-custom mb-0 fw-semibold">Add a new pet and owner to the clinic registry.</p>
+        </div>
+        <div>
+            <a href="{{ url_for('pets.index') }}" class="btn btn-outline-primary rounded-pill px-4 fw-bold shadow-sm">Cancel</a>
+        </div>
+    </div>
+
+    <form method="POST" action="" enctype="multipart/form-data">
+        <div class="row g-4">
+            <!-- Owner Info -->
+            <div class="col-md-6">
+                <div class="form-group-card h-100">
+                    <h5 class="mb-4 text-primary-custom fw-bold"><i class="bi bi-person-heart me-2 text-accent-custom"></i>Owner Information</h5>
+                    
+                    {{ owner_form.hidden_tag() }}
+                    
+                    <div class="form-floating mb-3">
+                        {{ owner_form.name(class="form-control", placeholder="Full Name") }}
+                        {{ owner_form.name.label }}
+                        {% if owner_form.name.errors %}
+                            {% for error in owner_form.name.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-floating mb-3">
+                        {{ owner_form.phone(class="form-control", placeholder="Phone Number") }}
+                        {{ owner_form.phone.label }}
+                        {% if owner_form.phone.errors %}
+                            {% for error in owner_form.phone.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-floating mb-3">
+                        {{ owner_form.email(class="form-control", placeholder="Email Address") }}
+                        {{ owner_form.email.label }}
+                        {% if owner_form.email.errors %}
+                            {% for error in owner_form.email.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        {{ owner_form.address(class="form-control", placeholder="Home Address", style="height: 100px") }}
+                        {{ owner_form.address.label }}
+                        {% if owner_form.address.errors %}
+                            {% for error in owner_form.address.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pet Info -->
+            <div class="col-md-6">
+                <div class="form-group-card h-100">
+                    <h5 class="mb-4 text-primary-custom fw-bold"><i class="bi bi-balloon-heart me-2 text-accent-custom"></i>Pet Information</h5>
+                    
+                    {{ pet_form.hidden_tag() }}
+                    
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="form-floating">
+                                {{ pet_form.name(class="form-control", placeholder="Pet Name") }}
+                                {{ pet_form.name.label }}
+                                {% if pet_form.name.errors %}
+                                    {% for error in pet_form.name.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ pet_form.species(class="form-select") }}
+                                {{ pet_form.species.label }}
+                                {% if pet_form.species.errors %}
+                                    {% for error in pet_form.species.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ pet_form.breed(class="form-control", placeholder="Breed") }}
+                                {{ pet_form.breed.label }}
+                                {% if pet_form.breed.errors %}
+                                    {% for error in pet_form.breed.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ pet_form.age(class="form-control", placeholder="Age") }}
+                                {{ pet_form.age.label }}
+                                {% if pet_form.age.errors %}
+                                    {% for error in pet_form.age.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ pet_form.weight(class="form-control", placeholder="Weight (kg)") }}
+                                {{ pet_form.weight.label }}
+                                {% if pet_form.weight.errors %}
+                                    {% for error in pet_form.weight.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <label class="form-label text-primary-custom fw-bold small text-uppercase">Pet Photo</label>
+                            <div class="upload-zone" onclick="document.getElementById('{{ pet_form.photo.id }}').click()">
+                                <i class="bi bi-camera-fill fs-1 mb-2 d-block"></i>
+                                <span>Click to upload pet photo</span>
+                                <div class="d-none">
+                                    {{ pet_form.photo(class="form-control") }}
+                                </div>
+                            </div>
+                            {% if pet_form.photo.errors %}
+                                {% for error in pet_form.photo.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 text-end">
+                <button type="submit" class="btn btn-accent btn-lg shadow-sm px-5 fw-bold rounded-pill"><i class="bi bi-check2-circle me-2"></i>Complete Registration</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

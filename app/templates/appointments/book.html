@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Book Appointment 📅{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1 text-primary-custom">Book Appointment 📅</h2>
+            <p class="text-muted-custom mb-0 fw-semibold">Schedule a visit for a patient.</p>
+        </div>
+        <div>
+            <a href="{{ url_for('appointments.index') }}" class="btn btn-outline-primary rounded-pill px-4 fw-bold shadow-sm">Cancel</a>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="form-group-card">
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ form.pet_id(class="form-select") }}
+                                {{ form.pet_id.label }}
+                                {% if form.pet_id.errors %}
+                                    {% for error in form.pet_id.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ form.doctor_id(class="form-select") }}
+                                {{ form.doctor_id.label }}
+                                {% if form.doctor_id.errors %}
+                                    {% for error in form.doctor_id.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ form.date(class="form-control", type="date") }}
+                                {{ form.date.label }}
+                                {% if form.date.errors %}
+                                    {% for error in form.date.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ form.time(class="form-control", type="time") }}
+                                {{ form.time.label }}
+                                {% if form.time.errors %}
+                                    {% for error in form.time.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-floating">
+                                {{ form.reason(class="form-control", placeholder="Reason for Visit") }}
+                                {{ form.reason.label }}
+                                {% if form.reason.errors %}
+                                    {% for error in form.reason.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-12 text-end mt-4">
+                            <button type="submit" class="btn btn-accent btn-lg shadow-sm px-5 fw-bold rounded-pill"><i class="bi bi-calendar-check me-2"></i>Confirm Booking</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - VetCare</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300b4d8'><path d='M12 2C9.243 2 7 4.243 7 7C7 9.757 9.243 12 12 12C14.757 12 17 9.757 17 7C17 4.243 14.757 2 12 2ZM6.5 13C4.567 13 3 14.567 3 16.5C3 18.433 4.567 20 6.5 20C8.433 20 10 18.433 10 16.5C10 14.567 8.433 13 6.5 13ZM17.5 13C15.567 13 14 14.567 14 16.5C14 18.433 15.567 20 17.5 20C19.433 20 21 18.433 21 16.5C21 14.567 19.433 13 17.5 13ZM12 15C9.79 15 8 16.79 8 19C8 21.21 9.79 23 12 23C14.21 23 16 21.21 16 19C16 16.79 14.21 15 12 15Z'/></svg>">
+</head>
+<body>
+
+    <div class="auth-wrapper">
+        <div class="auth-pattern"></div>
+        
+        <!-- Flash Messages -->
+        <div aria-live="polite" aria-atomic="true" class="position-relative z-3">
+            <div class="toast-container position-fixed bottom-0 end-0 p-4 mb-4">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="toast align-items-center text-bg-{{ category }} border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                                <div class="d-flex">
+                                    <div class="toast-body">
+                                        {% if category == 'success' %}<i class="bi bi-check-circle-fill me-2"></i>
+                                        {% elif category == 'danger' %}<i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                        {% else %}<i class="bi bi-info-circle-fill me-2"></i>{% endif %}
+                                        {{ message }}
+                                    </div>
+                                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+
+        <div class="auth-card">
+            <div class="text-center mb-4">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="var(--color-primary)" xmlns="http://www.w3.org/2000/svg" class="mb-3">
+                    <path d="M12 2C9.243 2 7 4.243 7 7C7 9.757 9.243 12 12 12C14.757 12 17 9.757 17 7C17 4.243 14.757 2 12 2ZM6.5 13C4.567 13 3 14.567 3 16.5C3 18.433 4.567 20 6.5 20C8.433 20 10 18.433 10 16.5C10 14.567 8.433 13 6.5 13ZM17.5 13C15.567 13 14 14.567 14 16.5C14 18.433 15.567 20 17.5 20C19.433 20 21 18.433 21 16.5C21 14.567 19.433 13 17.5 13ZM12 15C9.79 15 8 16.79 8 19C8 21.21 9.79 23 12 23C14.21 23 16 21.21 16 19C16 16.79 14.21 15 12 15Z"/>
+                </svg>
+                <h2 class="text-primary-custom fw-bold mb-2">VetCare Clinic</h2>
+                <p class="text-muted-custom">Welcome back! Please sign in.</p>
+            </div>
+
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                
+                <div class="form-floating mb-3">
+                    {{ form.username(class="form-control", id="floatingInput", placeholder="Username") }}
+                    {{ form.username.label(for="floatingInput") }}
+                </div>
+                
+                <div class="form-floating mb-4">
+                    {{ form.password(class="form-control", id="floatingPassword", placeholder="Password") }}
+                    {{ form.password.label(for="floatingPassword") }}
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check">
+                        {{ form.remember(class="form-check-input", id="flexCheckDefault") }}
+                        {{ form.remember.label(class="form-check-label text-muted-custom", for="flexCheckDefault") }}
+                    </div>
+                </div>
+
+                <div class="d-grid">
+                    {{ form.submit(class="btn btn-primary-custom btn-lg shadow-sm") }}
+                </div>
+                
+                <div class="text-center mt-4 p-3 rounded" style="background-color: var(--color-surface-2);">
+                    <small class="text-muted-custom fw-semibold mb-0">Demo Credentials</small>
+                    <p class="text-muted-custom small mb-0 mt-1">Admin: admin / admin123</p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+        var toastList = toastElList.map(function (toastEl) {
+            return new bootstrap.Toast(toastEl)
+        })
+    </script>
+</body>
+</html>

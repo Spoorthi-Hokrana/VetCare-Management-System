@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Log Vaccination - {{ pet.name }} 🐾{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1 text-primary-custom">Log Vaccination - {{ pet.name }} 🐾</h2>
+            <p class="text-muted-custom mb-0 fw-semibold">Add a new vaccination record.</p>
+        </div>
+        <div>
+            <a href="{{ url_for('pets.profile', pet_id=pet.id) }}" class="btn btn-outline-primary rounded-pill px-4 fw-bold shadow-sm">Cancel</a>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="form-group-card">
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div class="form-floating">
+                                {{ form.vaccine_name(class="form-control", placeholder="Vaccine Name") }}
+                                {{ form.vaccine_name.label }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ form.date_given(class="form-control", type="date") }}
+                                {{ form.date_given.label }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ form.next_due_date(class="form-control", type="date") }}
+                                {{ form.next_due_date.label }}
+                            </div>
+                        </div>
+
+                        <div class="col-12 text-end mt-4">
+                            <button type="submit" class="btn btn-accent btn-lg shadow-sm px-5 fw-bold rounded-pill"><i class="bi bi-shield-check me-2"></i>Log Vaccination</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

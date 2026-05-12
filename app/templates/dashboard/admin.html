@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard 🐾{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1 text-primary-custom">Dashboard 🐾</h2>
+            <p class="text-muted-custom mb-0 fw-semibold">🐶 {{ total_pets }} Pets Registered · 🩺 {{ todays_appointments }} Appts Today</p>
+        </div>
+        <div>
+            <a href="{{ url_for('appointments.book') }}" class="btn btn-accent shadow-sm"><i class="bi bi-plus-lg me-2"></i>New Appointment</a>
+        </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="white-card card-top-stripe stripe-primary h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted-custom mb-1 fw-bold text-uppercase" style="font-size: 0.8rem;">Total Pets</p>
+                        <h2 class="mb-0 text-primary-custom counter" data-target="{{ total_pets }}">0</h2>
+                    </div>
+                    <div class="p-2 rounded-circle bg-primary bg-opacity-10 text-primary-custom">
+                        <i class="bi bi-emoji-smile fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="white-card card-top-stripe stripe-accent h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted-custom mb-1 fw-bold text-uppercase" style="font-size: 0.8rem;">Today's Appts</p>
+                        <h2 class="mb-0 text-accent-custom counter" data-target="{{ todays_appointments }}">0</h2>
+                    </div>
+                    <div class="p-2 rounded-circle bg-warning bg-opacity-10 text-accent-custom">
+                        <i class="bi bi-calendar2-check fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="white-card card-top-stripe stripe-success h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted-custom mb-1 fw-bold text-uppercase" style="font-size: 0.8rem;">Revenue</p>
+                        <h2 class="mb-0 text-success">$<span class="counter" data-target="{{ revenue_this_month }}">0</span></h2>
+                    </div>
+                    <div class="p-2 rounded-circle bg-success bg-opacity-10 text-success">
+                        <i class="bi bi-currency-dollar fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="white-card card-top-stripe stripe-warning h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted-custom mb-1 fw-bold text-uppercase" style="font-size: 0.8rem;">Pending Bills</p>
+                        <h2 class="mb-0 text-warning counter" data-target="{{ pending_bills }}">0</h2>
+                    </div>
+                    <div class="p-2 rounded-circle bg-warning bg-opacity-10 text-warning">
+                        <i class="bi bi-receipt fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-8">
+            <div class="white-card h-100">
+                <h5 class="mb-4 fw-bold text-primary-custom">Revenue Trend</h5>
+                <canvas id="revenueChart" height="100"></canvas>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="white-card h-100">
+                <h5 class="mb-4 fw-bold text-primary-custom">Appointments Status</h5>
+                <div class="d-flex justify-content-center">
+                    <canvas id="statusChart" height="200" style="max-height: 250px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Appointments -->
+    <div class="row">
+        <div class="col-12">
+            <div class="white-card">
+                <h5 class="mb-4 fw-bold text-primary-custom">Recent Appointments</h5>
+                <div class="table-responsive">
+                    <table class="table table-custom">
+                        <thead>
+                            <tr>
+                                <th>Pet</th>
+                                <th>Doctor</th>
+                                <th>Date & Time</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appt in recent_appointments %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary bg-opacity-10 text-primary-custom rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                            {% if appt.pet.species == 'Dog' %}🐶
+                                            {% elif appt.pet.species == 'Cat' %}🐱
+                                            {% elif appt.pet.species == 'Rabbit' %}🐰
+                                            {% else %}🐾{% endif %}
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold">{{ appt.pet.name }}</h6>
+                                            <small class="text-muted-custom">{{ appt.pet.owner.name }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="fw-semibold">Dr. {{ appt.doctor.user.username }}</span></td>
+                                <td>
+                                    <div class="fw-semibold">{{ appt.date.strftime('%b %d, %Y') }}</div>
+                                    <small class="text-muted-custom">{{ appt.time.strftime('%I:%M %p') }}</small>
+                                </td>
+                                <td>{{ appt.reason }}</td>
+                                <td>
+                                    {% if appt.status == 'Scheduled' %}
+                                        <span class="badge badge-primary">{{ appt.status }}</span>
+                                    {% elif appt.status == 'In Progress' %}
+                                        <span class="badge badge-warning">{{ appt.status }}</span>
+                                    {% elif appt.status == 'Completed' %}
+                                        <span class="badge badge-success">{{ appt.status }}</span>
+                                    {% else %}
+                                        <span class="badge badge-error">{{ appt.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('pets.profile', pet_id=appt.pet.id) }}" class="btn btn-sm btn-primary-custom rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;"><i class="bi bi-chevron-right"></i></a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center py-5">
+                                    <svg width="64" height="64" viewBox="0 0 24 24" fill="var(--color-surface-2)" xmlns="http://www.w3.org/2000/svg" class="mb-3 d-block mx-auto">
+                                        <path d="M12 2C9.243 2 7 4.243 7 7C7 9.757 9.243 12 12 12C14.757 12 17 9.757 17 7C17 4.243 14.757 2 12 2ZM6.5 13C4.567 13 3 14.567 3 16.5C3 18.433 4.567 20 6.5 20C8.433 20 10 18.433 10 16.5C10 14.567 8.433 13 6.5 13ZM17.5 13C15.567 13 14 14.567 14 16.5C14 18.433 15.567 20 17.5 20C19.433 20 21 18.433 21 16.5C21 14.567 19.433 13 17.5 13ZM12 15C9.79 15 8 16.79 8 19C8 21.21 9.79 23 12 23C14.21 23 16 21.21 16 19C16 16.79 14.21 15 12 15Z"/>
+                                    </svg>
+                                    <p class="text-muted-custom fw-semibold mb-0">No recent appointments found.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Counter Animation
+    const counters = document.querySelectorAll('.counter');
+    counters.forEach(counter => {
+        counter.innerText = '0';
+        const updateCounter = () => {
+            const target = +counter.getAttribute('data-target');
+            const c = +counter.innerText;
+            const increment = target / 50;
+            if (c < target) {
+                counter.innerText = `${Math.ceil(c + increment)}`;
+                setTimeout(updateCounter, 20);
+            } else {
+                counter.innerText = target;
+            }
+        };
+        updateCounter();
+    });
+
+    // Chart Data
+    const revenueLabels = {{ revenue_labels | tojson }};
+    const revenueData = {{ revenue_data | tojson }};
+    const statusLabels = {{ status_labels | tojson }};
+    const statusData = {{ status_data | tojson }};
+
+    // Global Chart Defaults
+    Chart.defaults.color = '#6b8fa3';
+    Chart.defaults.font.family = "'Nunito', sans-serif";
+    Chart.defaults.font.weight = '600';
+
+    // Revenue Area Chart
+    const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
+    let gradient = ctxRevenue.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, 'rgba(0, 180, 216, 0.4)');
+    gradient.addColorStop(1, 'rgba(0, 180, 216, 0.0)');
+
+    new Chart(ctxRevenue, {
+        type: 'line',
+        data: {
+            labels: revenueLabels,
+            datasets: [{
+                label: 'Revenue ($)',
+                data: revenueData,
+                borderColor: '#00b4d8',
+                backgroundColor: gradient,
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#ffffff',
+                pointBorderColor: '#00b4d8',
+                pointBorderWidth: 3,
+                pointRadius: 5,
+                pointHoverRadius: 7
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.04)',
+                        drawBorder: false
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false,
+                        drawBorder: false
+                    }
+                }
+            }
+        }
+    });
+
+    // Status Donut Chart
+    const ctxStatus = document.getElementById('statusChart').getContext('2d');
+    
+    // Colors matching CSS variables
+    const colors = {
+        'Scheduled': '#00b4d8',
+        'In Progress': '#ffb347',
+        'Completed': '#2ec4b6',
+        'Cancelled': '#ef476f'
+    };
+    
+    const bgColors = statusLabels.map(label => colors[label] || '#eef6f9');
+
+    new Chart(ctxStatus, {
+        type: 'doughnut',
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                data: statusData,
+                backgroundColor: bgColors,
+                borderWidth: 0,
+                hoverOffset: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            cutout: '75%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true,
+                        pointStyle: 'circle'
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

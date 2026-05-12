@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile - {{ pet.name }} 🐾{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1 text-primary-custom">Edit Profile - {{ pet.name }} 🐾</h2>
+            <p class="text-muted-custom mb-0 fw-semibold">Update pet details.</p>
+        </div>
+        <div>
+            <a href="{{ url_for('pets.profile', pet_id=pet.id) }}" class="btn btn-outline-primary rounded-pill px-4 fw-bold shadow-sm">Cancel</a>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="form-group-card">
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div class="form-floating">
+                                {{ form.name(class="form-control", placeholder="Pet Name") }}
+                                {{ form.name.label }}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ form.species(class="form-select") }}
+                                {{ form.species.label }}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ form.breed(class="form-control", placeholder="Breed") }}
+                                {{ form.breed.label }}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ form.age(class="form-control", placeholder="Age") }}
+                                {{ form.age.label }}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ form.weight(class="form-control", placeholder="Weight (kg)") }}
+                                {{ form.weight.label }}
+                            </div>
+                        </div>
+
+                        <div class="col-12 text-end mt-4">
+                            <button type="submit" class="btn btn-primary-custom btn-lg shadow-sm px-5 fw-bold rounded-pill"><i class="bi bi-save me-2"></i>Save Changes</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

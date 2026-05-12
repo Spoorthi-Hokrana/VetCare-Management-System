@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Pet Profile - {{ pet.name }} 🐾{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    
+    <!-- Hero Banner -->
+    <div class="white-card mb-4 position-relative overflow-hidden" style="min-height: 250px; background: linear-gradient(135deg, var(--color-bg), var(--color-surface)); padding: 0;">
+        <!-- Abstract shape background -->
+        <div class="position-absolute top-0 end-0 opacity-25" style="transform: translate(20%, -20%); pointer-events: none;">
+            <svg width="300" height="300" viewBox="0 0 24 24" fill="var(--color-primary)" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C9.243 2 7 4.243 7 7C7 9.757 9.243 12 12 12C14.757 12 17 9.757 17 7C17 4.243 14.757 2 12 2ZM6.5 13C4.567 13 3 14.567 3 16.5C3 18.433 4.567 20 6.5 20C8.433 20 10 18.433 10 16.5C10 14.567 8.433 13 6.5 13ZM17.5 13C15.567 13 14 14.567 14 16.5C14 18.433 15.567 20 17.5 20C19.433 20 21 18.433 21 16.5C21 14.567 19.433 13 17.5 13ZM12 15C9.79 15 8 16.79 8 19C8 21.21 9.79 23 12 23C14.21 23 16 21.21 16 19C16 16.79 14.21 15 12 15Z"/>
+            </svg>
+        </div>
+        
+        <div class="d-flex align-items-end h-100 position-relative z-1 p-5">
+            <div class="bg-white rounded-circle d-flex align-items-center justify-content-center border border-4 me-4 shadow-sm" style="width: 130px; height: 130px; border-color: var(--color-primary) !important; font-size: 4rem;">
+                {% if pet.species == 'Dog' %}🐶
+                {% elif pet.species == 'Cat' %}🐱
+                {% elif pet.species == 'Rabbit' %}🐰
+                {% else %}🐾{% endif %}
+            </div>
+            <div class="mb-2">
+                <h1 class="display-5 fw-bold mb-2 text-primary-custom">{{ pet.name }}</h1>
+                <div class="d-flex gap-2">
+                    <span class="badge badge-primary px-3 py-2 fs-6">{{ pet.species }}</span>
+                    <span class="badge badge-primary px-3 py-2 fs-6">{{ pet.breed }}</span>
+                    <span class="badge badge-accent px-3 py-2 fs-6">{{ pet.age }} yrs old</span>
+                </div>
+            </div>
+            <div class="ms-auto mb-3">
+                <a href="{{ url_for('pets.edit_profile', pet_id=pet.id) }}" class="btn btn-outline-primary rounded-pill px-4 fw-bold me-2 bg-white"><i class="bi bi-pencil me-2"></i>Edit Profile</a>
+                <a href="{{ url_for('appointments.book', pet_id=pet.id) }}" class="btn btn-accent rounded-pill px-4 fw-bold shadow-sm"><i class="bi bi-calendar-plus me-2"></i>Book Visit</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Sidebar Info -->
+        <div class="col-md-4">
+            <div class="white-card mb-4 card-top-stripe stripe-primary">
+                <h5 class="mb-4 fw-bold text-primary-custom">Owner Information</h5>
+                <div class="d-flex align-items-center mb-3">
+                    <div class="p-2 rounded-circle bg-primary bg-opacity-10 text-primary-custom me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="bi bi-person-fill fs-5"></i>
+                    </div>
+                    <div>
+                        <small class="text-muted-custom d-block fw-bold text-uppercase" style="font-size: 0.75rem;">Name</small>
+                        <strong class="text-primary-custom">{{ pet.owner.name }}</strong>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center mb-3">
+                    <div class="p-2 rounded-circle bg-primary bg-opacity-10 text-primary-custom me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="bi bi-telephone-fill fs-5"></i>
+                    </div>
+                    <div>
+                        <small class="text-muted-custom d-block fw-bold text-uppercase" style="font-size: 0.75rem;">Phone</small>
+                        <strong class="text-primary-custom">{{ pet.owner.phone }}</strong>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="p-2 rounded-circle bg-primary bg-opacity-10 text-primary-custom me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="bi bi-envelope-fill fs-5"></i>
+                    </div>
+                    <div>
+                        <small class="text-muted-custom d-block fw-bold text-uppercase" style="font-size: 0.75rem;">Email</small>
+                        <strong class="text-primary-custom">{{ pet.owner.email or 'N/A' }}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="white-card card-top-stripe stripe-accent">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="mb-0 fw-bold text-primary-custom">Vaccinations</h5>
+                    <a href="{{ url_for('pets.add_vaccination', pet_id=pet.id) }}" class="btn btn-sm btn-accent rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;"><i class="bi bi-plus-lg"></i></a>
+                </div>
+                
+                <div class="vaccination-timeline">
+                    {% for vac in vaccinations %}
+                    <div class="position-relative ps-4 mb-4">
+                        <!-- Dot -->
+                        <div class="position-absolute rounded-circle border border-2 border-white shadow-sm" style="width: 14px; height: 14px; left: 0; top: 4px; background-color: var(--color-success); z-index: 2; transform: translateX(-5px);"></div>
+                        <!-- Line -->
+                        {% if not loop.last %}
+                        <div class="position-absolute" style="width: 2px; height: 100%; left: 1px; top: 14px; background-color: var(--color-surface-2); z-index: 1;"></div>
+                        {% endif %}
+                        
+                        <h6 class="mb-1 fw-bold text-primary-custom">{{ vac.vaccine_name }}</h6>
+                        <small class="text-muted-custom fw-semibold">Given: {{ vac.date_given.strftime('%b %d, %Y') }}</small><br>
+                        <small class="text-warning fw-bold">Next Due: {{ vac.next_due_date.strftime('%b %d, %Y') }}</small>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-shield-x fs-1 text-muted-custom mb-2 d-block"></i>
+                        <p class="text-muted-custom fw-semibold mb-0">No vaccination records.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Medical History Timeline -->
+        <div class="col-md-8">
+            <div class="white-card h-100">
+                <h5 class="mb-4 fw-bold text-primary-custom">Medical History</h5>
+                
+                <div class="timeline position-relative ps-4 border-start" style="border-color: var(--color-surface-2) !important;">
+                    {% for appt in history %}
+                        {% if appt.medical_record %}
+                        <div class="timeline-item position-relative mb-4">
+                            <span class="position-absolute top-0 start-0 translate-middle p-2 rounded-circle bg-primary border border-4 border-white shadow-sm" style="left: -1.5rem !important;">
+                                <span class="visually-hidden">New alerts</span>
+                            </span>
+                            <div class="white-card py-3 px-4 shadow-sm border border-1" style="border-color: var(--color-surface-2) !important;">
+                                <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2" style="border-color: var(--color-surface-2) !important;">
+                                    <h6 class="mb-0 text-primary-custom fw-bold">{{ appt.date.strftime('%B %d, %Y') }} - {{ appt.reason }}</h6>
+                                    <span class="badge badge-primary px-3"><i class="bi bi-person-badge me-2"></i>Dr. {{ appt.doctor.user.username }}</span>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <p class="mb-1 text-muted-custom fw-bold text-uppercase" style="font-size: 0.75rem;">Symptoms</p>
+                                        <p class="small fw-medium mb-0">{{ appt.medical_record.symptoms }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p class="mb-1 text-muted-custom fw-bold text-uppercase" style="font-size: 0.75rem;">Diagnosis</p>
+                                        <p class="small fw-bold text-primary-custom mb-0">{{ appt.medical_record.diagnosis }}</p>
+                                    </div>
+                                    <div class="col-12 mt-3 pt-3 border-top" style="border-color: var(--color-surface-2) !important;">
+                                        <p class="mb-1 text-muted-custom fw-bold text-uppercase" style="font-size: 0.75rem;">Treatment & Prescription</p>
+                                        <p class="small fw-medium mb-2">{{ appt.medical_record.treatment }}</p>
+                                        {% if appt.medical_record.prescriptions %}
+                                            <ul class="small mb-0 list-unstyled ps-2 border-start border-3 border-accent">
+                                            {% for rx in appt.medical_record.prescriptions %}
+                                                <li class="mb-1"><i class="bi bi-capsule text-accent-custom me-2"></i><span class="fw-bold">{{ rx.medicine_name }}</span> — {{ rx.dosage }} for {{ rx.duration }}</li>
+                                            {% endfor %}
+                                            </ul>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-5">
+                            <svg width="80" height="80" viewBox="0 0 24 24" fill="var(--color-surface-2)" xmlns="http://www.w3.org/2000/svg" class="mb-4">
+                                <path d="M19 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V5C21 3.89543 20.1046 3 19 3Z" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M9 12H15" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 9V15" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <p class="text-muted-custom fw-bold mb-0">No medical history available yet.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline-item::before {
+    display: none;
+}
+</style>
+{% endblock %}

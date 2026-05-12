@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Add Staff 🧑‍⚕️{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1 text-primary-custom">Add Staff 🧑‍⚕️</h2>
+            <p class="text-muted-custom mb-0 fw-semibold">Add a new doctor, admin, or receptionist.</p>
+        </div>
+        <div>
+            <a href="{{ url_for('admin.staff') }}" class="btn btn-outline-primary rounded-pill px-4 fw-bold shadow-sm">Cancel</a>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="form-group-card">
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div class="form-floating">
+                                {{ form.username(class="form-control", placeholder="Username") }}
+                                {{ form.username.label }}
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-floating">
+                                {{ form.email(class="form-control", placeholder="Email") }}
+                                {{ form.email.label }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ form.password(class="form-control", placeholder="Password") }}
+                                {{ form.password.label }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ form.role(class="form-select") }}
+                                {{ form.role.label }}
+                            </div>
+                        </div>
+
+                        <div class="col-12 text-end mt-4">
+                            <button type="submit" class="btn btn-primary-custom btn-lg shadow-sm px-5 fw-bold rounded-pill"><i class="bi bi-person-check me-2"></i>Create Account</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

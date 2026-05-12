@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Pets & Owners 🐾{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1 text-primary-custom">Pets & Owners 🐾</h2>
+            <p class="text-muted-custom mb-0 fw-semibold">Manage all the furry, feathery, and scaly friends.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('pets.add_pet') }}" class="btn btn-outline-primary rounded-pill fw-bold px-4 shadow-sm"><i class="bi bi-plus-circle me-2"></i>Existing Owner</a>
+            <a href="{{ url_for('pets.register') }}" class="btn btn-primary-custom shadow-sm"><i class="bi bi-person-plus-fill me-2"></i>New Owner & Pet</a>
+        </div>
+    </div>
+
+    <div class="white-card">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="mb-0 fw-bold text-primary-custom">All Registered Pets</h5>
+            <div class="input-group" style="width: 320px;">
+                <span class="input-group-text bg-white border-end-0" style="border-radius: 12px 0 0 12px; border-color: var(--color-surface-2);"><i class="bi bi-search text-muted-custom"></i></span>
+                <input type="text" class="form-control border-start-0 ps-0" placeholder="Search pets..." style="border-radius: 0 12px 12px 0; border-color: var(--color-surface-2); box-shadow: none;">
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-custom">
+                <thead>
+                    <tr>
+                        <th>Pet Info</th>
+                        <th>Owner</th>
+                        <th>Contact</th>
+                        <th>Species/Breed</th>
+                        <th>Age</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pet in pets %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary bg-opacity-10 text-primary-custom rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 44px; height: 44px; font-size: 1.2rem;">
+                                    {% if pet.species == 'Dog' %}🐶
+                                    {% elif pet.species == 'Cat' %}🐱
+                                    {% elif pet.species == 'Rabbit' %}🐰
+                                    {% else %}🐾{% endif %}
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 fw-bold">{{ pet.name }}</h6>
+                                    <small class="text-muted-custom fw-semibold">ID: #{{ '%04d' % pet.id }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="fw-semibold">{{ pet.owner.name }}</td>
+                        <td class="text-muted-custom">{{ pet.owner.phone }}</td>
+                        <td>
+                            <div class="fw-bold">{{ pet.species }}</div>
+                            <small class="text-muted-custom">{{ pet.breed }}</small>
+                        </td>
+                        <td class="fw-semibold">{{ pet.age }} yrs</td>
+                        <td>
+                            <a href="{{ url_for('pets.profile', pet_id=pet.id) }}" class="btn btn-sm btn-accent shadow-sm rounded-pill px-3 fw-bold">View Profile</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="var(--color-surface-2)" xmlns="http://www.w3.org/2000/svg" class="mb-3 d-block mx-auto">
+                                <path d="M12 2C9.243 2 7 4.243 7 7C7 9.757 9.243 12 12 12C14.757 12 17 9.757 17 7C17 4.243 14.757 2 12 2ZM6.5 13C4.567 13 3 14.567 3 16.5C3 18.433 4.567 20 6.5 20C8.433 20 10 18.433 10 16.5C10 14.567 8.433 13 6.5 13ZM17.5 13C15.567 13 14 14.567 14 16.5C14 18.433 15.567 20 17.5 20C19.433 20 21 18.433 21 16.5C21 14.567 19.433 13 17.5 13ZM12 15C9.79 15 8 16.79 8 19C8 21.21 9.79 23 12 23C14.21 23 16 21.21 16 19C16 16.79 14.21 15 12 15Z"/>
+                            </svg>
+                            <p class="text-muted-custom fw-semibold mb-0">No pets registered yet. Time to add some furry friends!</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
