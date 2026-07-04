@@ -26,7 +26,9 @@ def create_app(config_class=Config):
     mail.init_app(app)
 
     with app.app_context():
-        # Make sure uploads dir exists
+        # Make sure instance and uploads directories exist
+        db_path = app.config['SQLALCHEMY_DATABASE_URI'].replace('sqlite:///', '')
+        os.makedirs(os.path.dirname(db_path), exist_ok=True)
         os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
         
         # Import models so SQLAlchemy knows about them before creating tables
